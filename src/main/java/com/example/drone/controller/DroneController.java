@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/drone")
 public class DroneController {
 
     @Autowired
@@ -90,6 +90,10 @@ public class DroneController {
         return new ResponseEntity<>(droneService.checkDroneInformation(checkDroneDto), HttpStatus.OK);
     }
 
+
+    /**
+     * The following methods are used for my own testing while building the application.
+     */
     @GetMapping("/getDrones")
     public ResponseEntity<List<Drone>> getDronesList() {
         return new ResponseEntity<>(droneService.getDronesList(), HttpStatus.OK);

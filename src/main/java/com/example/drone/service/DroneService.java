@@ -127,9 +127,9 @@ public class DroneService {
 
         if(drone != null) {
             if (drone.getBatteryCapacity() >= 25 && drone.getState().equals("IDLE")){
-                droneAvailabilityDto.setAvailabilty(true);
+                droneAvailabilityDto.setAvailable(1);
             } else {
-                droneAvailabilityDto.setAvailabilty(false);
+                droneAvailabilityDto.setAvailable(0);
             }
             return droneAvailabilityDto;
         } else {

@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DroneAvailabilityDto {
     private String serialNumber;
-    private boolean availabilty;
+    private int available;
 }
