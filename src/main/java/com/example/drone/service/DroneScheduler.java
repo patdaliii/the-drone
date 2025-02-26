@@ -32,7 +32,7 @@ public class DroneScheduler {
     private final String deliveredState = "DELIVERED";
     private final String returningState = "RETURNING";
 
-    @Scheduled(initialDelay = 10000, fixedRate = 10000)
+    @Scheduled(fixedRate = 10000)
     public void updateLoadingToLoaded() {
         List<Drone> loadingDrones = droneRepository.findByState(loadingState);
 
@@ -44,7 +44,7 @@ public class DroneScheduler {
         log.info("All LOADING drones are updated to LOADED");
     }
 
-    @Scheduled(initialDelay = 15000, fixedRate = 5000)
+    @Scheduled(fixedRate = 5000)
     public void updateLoadedToDelivering() {
         List<Drone> loadedDrones = droneRepository.findByState(loadedState);
 
@@ -56,7 +56,7 @@ public class DroneScheduler {
         log.info("All LOADED drones are updated to DELIVERING");
     }
 
-    @Scheduled(initialDelay = 35000, fixedRate = 20000) 
+    @Scheduled(fixedRate = 20000) 
     public void updateDeliveringToDelivered() {
         List<Drone> deliveringDrones = droneRepository.findByState(deliveringState);
 
@@ -74,7 +74,7 @@ public class DroneScheduler {
         log.info("All DELIVERING drones are updated to DELIVERED");
     }
 
-    @Scheduled(initialDelay = 45000, fixedRate = 5000)
+    @Scheduled(fixedRate = 5000)
     public void updateDeliveredToReturning() {
         List<Drone> deliveredDrones = droneRepository.findByState(deliveredState);
 
@@ -86,7 +86,7 @@ public class DroneScheduler {
         log.info("All DELIVERED drones are updated to RETURNING");
     }
 
-    @Scheduled(initialDelay = 55000, fixedRate = 10000)
+    @Scheduled(fixedRate = 10000)
     public void updateReturningToIdle() {
         List<Drone> returningDrones = droneRepository.findByState(returningState);
 
@@ -99,7 +99,7 @@ public class DroneScheduler {
         log.info("All RETURNING drones are updated to IDLE");
     }
 
-    @Scheduled(initialDelay = 65000, fixedRate = 10000)
+    @Scheduled(fixedRate = 10000)
     public void fullyChargeIdleDrones() {
         List<Drone> idleDrones = droneRepository.findByState(idleState);
 
