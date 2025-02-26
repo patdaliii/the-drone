@@ -3,14 +3,14 @@ package com.example.drone.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.drone.dto.LoadMedicationDTO;
+import com.example.drone.dto.LoadMedicationDto;
+import com.example.drone.dto.NewDroneDto;
 import com.example.drone.entity.Drone;
 import com.example.drone.entity.Medication;
 import com.example.drone.repository.MedicationRepository;
 import com.example.drone.service.DroneService;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,8 +38,8 @@ public class DroneController {
      * @return new drone
      */
     @PostMapping("/registerDrone")
-    public ResponseEntity<Drone> registerDrone(@RequestBody Drone drone) {
-        return new ResponseEntity<>(droneService.registerDrone(drone), HttpStatus.CREATED);
+    public ResponseEntity<Drone> registerDrone(@RequestBody NewDroneDto newDrone) {
+        return new ResponseEntity<>(droneService.registerDrone(newDrone), HttpStatus.CREATED);
     }
     
     /**
@@ -50,8 +50,9 @@ public class DroneController {
      * @return drone with updated list of loaded medication
      */
     @PutMapping("/loadDrone/{serialNumber}")
-    public ResponseEntity<Optional<Drone>> loadDrone(@PathVariable(value = "serialNumber") String serialNumber, @RequestBody LoadMedicationDTO loadMedication) {
-        return new ResponseEntity<>(droneService.loadDroneWithMedication(serialNumber, loadMedication), HttpStatus.OK);
+    public ResponseEntity<Drone> loadDrone(@PathVariable(value = "serialNumber") String serialNumber, @RequestBody LoadMedicationDto loadMedicationDto) {
+        System.out.println("loadMedication" + loadMedicationDto);
+        return new ResponseEntity<>(droneService.loadDroneWithMedication(serialNumber, loadMedicationDto), HttpStatus.OK);
     }
     
     /**
@@ -97,7 +98,7 @@ public class DroneController {
     }
     
     @GetMapping("/{serialNumber}")
-    public Optional<Drone> getDroneWithMedications(@PathVariable String serialNumber) {
+    public Drone getDroneWithMedications(@PathVariable String serialNumber) {
         return droneService.getDroneBySerialNumber(serialNumber);
     }
 }

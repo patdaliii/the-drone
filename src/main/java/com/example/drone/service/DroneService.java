@@ -6,7 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.drone.dto.LoadMedicationDTO;
+import com.example.drone.dto.LoadMedicationDto;
+import com.example.drone.dto.NewDroneDto;
 import com.example.drone.entity.Drone;
 import com.example.drone.entity.Medication;
 import com.example.drone.repository.DroneRepository;
@@ -21,33 +22,38 @@ public class DroneService {
     @Autowired
     MedicationRepository medicationRepository;
 
-    public Drone registerDrone(Drone drone) {
+    public Drone registerDrone(NewDroneDto newDroneDto) {
         try {
-            Drone newDrone = droneRepository.save(drone);
+            Drone newDrone = new Drone();
+            newDrone.setSerialNumber(newDroneDto.getSerialNumber());
+            newDrone.setModel(newDroneDto.getModel());
+            newDrone.setWeightLimit(newDroneDto.getWeightLimit());
+            newDrone.setBatteryCapacity(newDroneDto.getBatteryCapacity());
+            newDrone.setState("IDLE");
+            droneRepository.save(newDrone);
             return newDrone;
         } catch (Exception e) {
             throw new RuntimeException("Failed to register drone", e);
         }
     }
 
-    public Optional<Drone> loadDroneWithMedication(String serialNumber, LoadMedicationDTO loadMedication) {
+    public Drone loadDroneWithMedication(String serialNumber, LoadMedicationDto loadMedicationDto) {
         // Check for Drone availabilty
-        // TODO: add loading of medication to DRONE
-        Optional<Drone> drone = droneRepository.findBySerialNumber(serialNumber);
+        Drone drone = droneRepository.findBySerialNumber(serialNumber);
 
-        if (drone.isPresent()) {
-            String droneAvailability = drone.get().getState();
-            if (droneAvailability.equals("IDLE")) {
-                for (Medication medication : loadMedication.getMedicationList()) {
+        if (drone != null) {
+            if (drone.getState().equals("IDLE") && drone.getBatteryCapacity() >= 25) {
+                for (Medication medication : loadMedicationDto.getMedicationList()) {
                     Medication checkMedication = medicationRepository.findByCode(medication.getCode());
                     if (checkMedication == null) {
-
+                        // automatically register new Medicine if not found in db
+                        registerMedication(medication, drone);
                     }
                 }
-                drone.get().setState("LOADED");
+                drone.setState("LOADING");
                 return drone;
             } else {
-                throw new RuntimeException("Unavailable! Drone is " + droneAvailability);
+                throw new RuntimeException("Unavailable! Drone is " + drone.getState() + " & @ " + drone.getBatteryCapacity() + "%");
             }
         } else {
             throw new RuntimeException("Drone not found!");
@@ -55,10 +61,10 @@ public class DroneService {
     }
 
     public List<Medication> checkLoadedMedication(String serialNumber) {
-        Optional<Drone> drone = droneRepository.findBySerialNumber(serialNumber);
+        Drone drone = droneRepository.findBySerialNumber(serialNumber);
 
-        if (drone.isPresent()) {
-            return medicationRepository.findByDroneId(drone.get().getId());
+        if (drone != null) {
+            return medicationRepository.findByDroneId(drone.getId());
         } else {
             throw new RuntimeException("Drone not found!");
         }
@@ -84,9 +90,10 @@ public class DroneService {
         }
     }
 
-    private Medication registerMedication(Medication medication, Long droneId) {
-        medication.setDrone(null);
-        return medicationRepository.findByCode(code);
+    private Medication registerMedication(Medication medication, Drone drone) {
+        medication.setDrone(drone);
+        Medication newMedication = medicationRepository.save(medication);
+        return newMedication;
     }
 
     public List<Drone> getDronesList() {
@@ -97,7 +104,7 @@ public class DroneService {
         return medicationRepository.findAll();
     }
 
-    public Optional<Drone> getDroneBySerialNumber(String serialNumber) {
+    public Drone getDroneBySerialNumber(String serialNumber) {
         return droneRepository.findBySerialNumber(serialNumber);
     }
 }

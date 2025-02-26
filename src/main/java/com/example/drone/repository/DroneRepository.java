@@ -1,11 +1,13 @@
 package com.example.drone.repository;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.example.drone.entity.Drone;
 
 public interface DroneRepository extends JpaRepository<Drone, Long> {
-    Optional<Drone> findBySerialNumber(String serialNumber);
+    Drone findBySerialNumber(String serialNumber);
+
+    List<Drone> findByState(String state);
 }

@@ -8,7 +8,7 @@ INSERT INTO drone (serial_number, model, weight_limit, battery_capacity, state) 
 INSERT INTO drone (serial_number, model, weight_limit, battery_capacity, state) VALUES ('A1234567890STU', 'CRUISERWEIGHT', 750, 100, 'IDLE');
 INSERT INTO drone (serial_number, model, weight_limit, battery_capacity, state) VALUES ('A1234567890VWX', 'HEAVYWEIGHT', 1000, 100, 'IDLE');
 INSERT INTO drone (serial_number, model, weight_limit, battery_capacity, state) VALUES ('A1234567890YZA', 'HEAVYWEIGHT', 1000, 100, 'IDLE');
-INSERT INTO drone (serial_number, model, weight_limit, battery_capacity, state) VALUES ('A1234567890BCD', 'HEAVYWEIGHT', 1000, 100, 'IDLE');
+INSERT INTO drone (serial_number, model, weight_limit, battery_capacity, state) VALUES ('A1234567890BCD', 'HEAVYWEIGHT', 1000, 50, 'RETURNING');
 
 -- INITIAL SAMPLE DATA FOR MEDICATION TABLE
 INSERT INTO medication (name, weight, code, drone_id) VALUES ('PARACETAMOL', 100, 'N02BE01', '1');
