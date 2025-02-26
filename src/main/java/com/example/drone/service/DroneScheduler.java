@@ -38,7 +38,6 @@ public class DroneScheduler {
 
         for (Drone drone : loadingDrones) {
             drone.setState(loadedState);
-            drone.setBatteryCapacity(drone.getBatteryCapacity() - 5);
         }
 
         droneRepository.saveAll(loadingDrones);
@@ -63,7 +62,7 @@ public class DroneScheduler {
 
         for (Drone drone : deliveringDrones) {
             drone.setState(deliveredState);
-            drone.setBatteryCapacity(drone.getBatteryCapacity() - 20);
+            drone.setBatteryCapacity(drone.getBatteryCapacity() - 40);
             log.info("drone " + drone.toString());
 
             // remove Drone column in Medication Table
@@ -93,7 +92,7 @@ public class DroneScheduler {
 
         for(Drone drone : returningDrones) {
             drone.setState(idleState);
-            drone.setBatteryCapacity(drone.getBatteryCapacity() - 10);
+            drone.setBatteryCapacity(drone.getBatteryCapacity() - 20);
         }
 
         droneRepository.saveAll(returningDrones);

@@ -179,9 +179,44 @@ public class DroneService {
      * @return newly created Medication
      */
     private Medication registerMedication(Medication medication, Drone drone) {
-        medication.setDrone(drone);
-        Medication newMedication = medicationRepository.save(medication);
-        return newMedication;
+        boolean isNameValid = medicationNameCheck(medication.getName());
+        boolean isCodeValid = medicationCodeCheck(medication.getCode());
+
+        if (isNameValid && isCodeValid) {
+            medication.setDrone(drone);
+            Medication newMedication = medicationRepository.save(medication);
+            return newMedication;
+        } else {
+            throw new RuntimeException("Medication name and/or code is invalid!");
+        }   
+    }
+
+    /**
+     * Check if Medication name only contains letters, numbers, -, and _
+     * 
+     * @param name of Mediation
+     * @return boolean
+     */
+    private boolean medicationNameCheck(String name) {
+        if (name.matches("[a-zA-Z0-9_-]+")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Check if Medication code only contains uppercase letters, underscores, and numbers
+     * 
+     * @param code
+     * @return
+     */
+    private boolean medicationCodeCheck(String code) {
+        if (code.matches("[A-Z0-9_]+")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public List<Drone> getDronesList() {
