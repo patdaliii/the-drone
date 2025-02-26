@@ -3,6 +3,9 @@ package com.example.drone.controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.drone.dto.CheckDroneDto;
+import com.example.drone.dto.DroneAvailabilityDto;
+import com.example.drone.dto.DroneInformationDto;
 import com.example.drone.dto.LoadMedicationDto;
 import com.example.drone.dto.NewDroneDto;
 import com.example.drone.entity.Drone;
@@ -49,10 +52,9 @@ public class DroneController {
      * @param loadMedication list of medication to be loaded
      * @return drone with updated list of loaded medication
      */
-    @PutMapping("/loadDrone/{serialNumber}")
-    public ResponseEntity<Drone> loadDrone(@PathVariable(value = "serialNumber") String serialNumber, @RequestBody LoadMedicationDto loadMedicationDto) {
-        System.out.println("loadMedication" + loadMedicationDto);
-        return new ResponseEntity<>(droneService.loadDroneWithMedication(serialNumber, loadMedicationDto), HttpStatus.OK);
+    @PutMapping("/loadDrone")
+    public ResponseEntity<Drone> loadDrone(@RequestBody LoadMedicationDto loadMedicationDto) {
+        return new ResponseEntity<>(droneService.loadDroneWithMedication(loadMedicationDto), HttpStatus.OK);
     }
     
     /**
@@ -61,9 +63,9 @@ public class DroneController {
      * @param id of the drone
      * @return medication
      */
-    @GetMapping("/checkLoadedMedication/{serialNumber}")
-    public ResponseEntity<List<Medication>> getLoadedMedication(@PathVariable(value = "serialNumber") String serialNumber) {
-        return new ResponseEntity<>(droneService.checkLoadedMedication(serialNumber), HttpStatus.OK);
+    @GetMapping("/checkLoadedMedication")
+    public ResponseEntity<List<Medication>> getLoadedMedication(@RequestBody CheckDroneDto checkDroneDto) {
+        return new ResponseEntity<>(droneService.checkLoadedMedication(checkDroneDto), HttpStatus.OK);
     }
 
     /**
@@ -72,9 +74,9 @@ public class DroneController {
      * @param id of the drone
      * @return drone state
      */
-    @GetMapping("/checkDroneAvailability/{serialNumber}")
-    public ResponseEntity<String> checkDroneAvailability(@PathVariable(value = "serialNumber") String serialNumber) {
-        return new ResponseEntity<>(droneService.checkDroneAvailability(serialNumber), HttpStatus.OK);
+    @GetMapping("/checkDroneAvailability")
+    public ResponseEntity<DroneAvailabilityDto> checkDroneAvailability(@RequestBody CheckDroneDto checkDroneDto) {
+        return new ResponseEntity<>(droneService.checkDroneAvailability(checkDroneDto), HttpStatus.OK);
     }
     
     /**
@@ -83,9 +85,9 @@ public class DroneController {
      * @param serialNumber of the Drone
      * @return battery percentage of the drone
      */
-    @GetMapping("/checkDroneInformation/{serialNumber}")
-    public ResponseEntity<String> checkDroneInformation(@PathVariable(value = "serialNumber") String serialNumber) {
-        return new ResponseEntity<>(droneService.checkDroneInformation(serialNumber), HttpStatus.OK);
+    @GetMapping("/checkDroneInformation")
+    public ResponseEntity<DroneInformationDto> checkDroneInformation(@RequestBody CheckDroneDto checkDroneDto) {
+        return new ResponseEntity<>(droneService.checkDroneInformation(checkDroneDto), HttpStatus.OK);
     }
 
     @GetMapping("/getDrones")

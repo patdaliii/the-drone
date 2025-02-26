@@ -6,6 +6,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.example.drone.dto.CheckDroneDto;
+import com.example.drone.dto.DroneAvailabilityDto;
+import com.example.drone.dto.DroneInformationDto;
 import com.example.drone.dto.LoadMedicationDto;
 import com.example.drone.dto.NewDroneDto;
 import com.example.drone.entity.Drone;
@@ -53,9 +56,9 @@ public class DroneService {
      * @param loadMedicationDto list of medications to be loaded
      * @return Drone with updated list of medications loaded
      */
-    public Drone loadDroneWithMedication(String serialNumber, LoadMedicationDto loadMedicationDto) {
+    public Drone loadDroneWithMedication(LoadMedicationDto loadMedicationDto) {
         // Check for Drone availabilty
-        Drone drone = droneRepository.findBySerialNumber(serialNumber);
+        Drone drone = droneRepository.findBySerialNumber(loadMedicationDto.getSerialNumber());
 
         if (drone != null) {
             if (drone.getState().equals("IDLE") && drone.getBatteryCapacity() >= 25) {
@@ -101,9 +104,8 @@ public class DroneService {
      * @param serialNumber of the Drone to be checked
      * @return list of Medication
      */
-    public List<Medication> checkLoadedMedication(String serialNumber) {
-        Drone drone = droneRepository.findBySerialNumber(serialNumber);
-
+    public List<Medication> checkLoadedMedication(CheckDroneDto checkDroneDto) {
+        Drone drone = droneRepository.findBySerialNumber(checkDroneDto.getSerialNumber());
         if (drone != null) {
             return medicationRepository.findByDroneId(drone.getId());
         } else {
@@ -117,11 +119,19 @@ public class DroneService {
      * @param serialNumber of the Drone
      * @return Drone State
      */
-    public String checkDroneAvailability(String serialNumber) {
-        Drone drone = droneRepository.findBySerialNumber(serialNumber);
+    public DroneAvailabilityDto checkDroneAvailability(CheckDroneDto checkDroneDto) {
+        Drone drone = droneRepository.findBySerialNumber(checkDroneDto.getSerialNumber());
+
+        DroneAvailabilityDto droneAvailabilityDto = new DroneAvailabilityDto();
+        droneAvailabilityDto.setSerialNumber(checkDroneDto.getSerialNumber());
 
         if(drone != null) {
-            return drone.getState();
+            if (drone.getBatteryCapacity() >= 25 && drone.getState().equals("IDLE")){
+                droneAvailabilityDto.setAvailabilty(true);
+            } else {
+                droneAvailabilityDto.setAvailabilty(false);
+            }
+            return droneAvailabilityDto;
         } else {
             throw new RuntimeException("Drone not found!");
         }
@@ -133,11 +143,15 @@ public class DroneService {
      * @param serialNumber of the Drone
      * @return battery percentage of the Drone
      */
-    public String checkDroneInformation(String serialNumber) {
-        Drone drone = droneRepository.findBySerialNumber(serialNumber);
+    public DroneInformationDto checkDroneInformation(CheckDroneDto checkDroneDto) {
+        Drone drone = droneRepository.findBySerialNumber(checkDroneDto.getSerialNumber());
+
+        DroneInformationDto droneInformationDto = new DroneInformationDto();
+        droneInformationDto.setSerialNumber(checkDroneDto.getSerialNumber());
 
         if(drone != null) {
-            return new String ("Drone " + String.valueOf(drone.getSerialNumber()) + " is currently at " + String.valueOf(drone.getBatteryCapacity()) + "%");
+            droneInformationDto.setBattery(drone.getBatteryCapacity());
+            return droneInformationDto;
         } else {
             throw new RuntimeException("Drone not found!");
         }

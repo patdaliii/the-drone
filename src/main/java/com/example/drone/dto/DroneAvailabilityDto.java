@@ -1,9 +1,5 @@
 package com.example.drone.dto;
 
-import java.util.List;
-
-import com.example.drone.entity.Medication;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoadMedicationDto {
+public class DroneAvailabilityDto {
     private String serialNumber;
-    private List<Medication> medicationList;
+    private boolean availabilty;
 }
