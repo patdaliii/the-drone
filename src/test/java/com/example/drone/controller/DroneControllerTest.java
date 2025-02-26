@@ -86,7 +86,11 @@ public class DroneControllerTest {
 
         // Mock Drone with loaded Medication
         mockLoadedDrone = new Drone();
-        mockLoadedDrone = mockDrone;
+        mockLoadedDrone.setId(1L);
+        mockLoadedDrone.setSerialNumber("DRONE001");
+        mockLoadedDrone.setModel("LIGHTWEIGHT");
+        mockLoadedDrone.setWeightLimit(250);
+        mockLoadedDrone.setBatteryCapacity(100);
         mockLoadedDrone.setState("LOADED");
         mockLoadedDrone.setMedications(mockMedicationList);
 

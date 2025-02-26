@@ -77,26 +77,30 @@ public class DroneServiceTest {
         mockSavedMedication = new Medication();
         mockSavedMedication = mockMedication;
         mockSavedMedication.setId(01L);
-        
+
+        // Mock Medication List
+        mockMedicationList = new ArrayList<>();
+        mockMedicationList.add(mockMedication);
 
         // Mock Medication
         mockLoadMedicationDto = new LoadMedicationDto();
         mockLoadMedicationDto.setSerialNumber("DRONE001");
         mockLoadMedicationDto.setMedicationList(mockMedicationList);
 
-        // Mock Medication List
-        mockMedicationList = new ArrayList<>();
-        mockMedicationList.add(mockMedication);
-
         // Mock Loaded Drone
         mockLoadedDrone = new Drone();
-        mockLoadedDrone = mockSavedDrone;
+        mockLoadedDrone.setId(1L);
+        mockSavedDrone.setSerialNumber("DRONE001");
+        mockSavedDrone.setModel("LIGHTWEIGHT");
+        mockSavedDrone.setWeightLimit(250);
+        mockSavedDrone.setBatteryCapacity(100);
         mockLoadedDrone.setState("LOADED");
         mockLoadedDrone.setMedications(mockMedicationList);
 
         // Mock CheckDroneDto
         mockCheckDroneDto = new CheckDroneDto();
         mockCheckDroneDto.setSerialNumber("DRONE001");
+
     }
 
     @Test
@@ -152,7 +156,7 @@ public class DroneServiceTest {
 
         // Verify interactions
         verify(droneRepository, times(1)).findBySerialNumber("DRONE001");
-        verify(medicationRepository, times(1)).findByDroneId(01L);
+        verify(medicationRepository, times(1)).findByDroneId(1L);
 
         // Assertions
         assertNotNull(medicationList);
@@ -179,7 +183,7 @@ public class DroneServiceTest {
 
     @Test
     void testCheckDroneInformation() {
-        when(droneRepository.findBySerialNumber("DRONE001")).thenReturn(mockLoadedDrone);
+        when(droneRepository.findBySerialNumber("DRONE001")).thenReturn(mockSavedDrone);
 
         DroneInformationDto droneInformationDto = droneService.checkDroneInformation(mockCheckDroneDto);
 
