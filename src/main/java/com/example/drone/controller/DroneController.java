@@ -67,19 +67,25 @@ public class DroneController {
     }
 
     /**
-     * Check Drone availability
+     * Check Drone State
      * 
      * @param id of the drone
      * @return drone state
      */
-    @GetMapping("/checkDroneAvailability/{id}")
-    public ResponseEntity<String> checkDroneAvailability(@PathVariable(value = "id") String id) {
-        return new ResponseEntity<>(droneService.checkDroneAvailability(Long.parseLong(id)), HttpStatus.OK);
+    @GetMapping("/checkDroneAvailability/{serialNumber}")
+    public ResponseEntity<String> checkDroneAvailability(@PathVariable(value = "serialNumber") String serialNumber) {
+        return new ResponseEntity<>(droneService.checkDroneAvailability(serialNumber), HttpStatus.OK);
     }
     
-    @GetMapping("/checkDroneInformation/{id}")
-    public ResponseEntity<String> checkDroneInformation(@PathVariable(value = "id") String id) {
-        return new ResponseEntity<>(droneService.checkDroneInformation(Long.parseLong(id)), HttpStatus.OK);
+    /**
+     * Check Drone Battery Percentage
+     * 
+     * @param serialNumber of the Drone
+     * @return battery percentage of the drone
+     */
+    @GetMapping("/checkDroneInformation/{serialNumber}")
+    public ResponseEntity<String> checkDroneInformation(@PathVariable(value = "serialNumber") String serialNumber) {
+        return new ResponseEntity<>(droneService.checkDroneInformation(serialNumber), HttpStatus.OK);
     }
 
     @GetMapping("/getDrones")

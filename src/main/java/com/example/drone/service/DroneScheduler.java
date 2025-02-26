@@ -5,18 +5,25 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.drone.entity.Drone;
+import com.example.drone.entity.Medication;
 import com.example.drone.repository.DroneRepository;
+import com.example.drone.repository.MedicationRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@Transactional
 public class DroneScheduler {
     
     @Autowired
     DroneRepository droneRepository;
+
+    @Autowired
+    MedicationRepository medicationRepository;
 
     private final String idleState = "IDLE";
     private final String loadingState = "LOADING";
@@ -57,6 +64,11 @@ public class DroneScheduler {
         for (Drone drone : deliveringDrones) {
             drone.setState(deliveredState);
             drone.setBatteryCapacity(drone.getBatteryCapacity() - 20);
+            log.info("drone " + drone.toString());
+
+            // remove Drone column in Medication Table
+            updateMedication(drone.getMedications());
+            drone.setMedications(null);
         }
 
         droneRepository.saveAll(deliveringDrones);
@@ -98,5 +110,12 @@ public class DroneScheduler {
 
         droneRepository.saveAll(idleDrones);
         log.info("All IDLE drones have been fully charged to 100%");
+    }
+
+    private void updateMedication(List<Medication> loadList) {
+        for (Medication medication : loadList) {
+            medication.setDrone(null);
+        }
+        medicationRepository.saveAll(loadList);
     }
 }

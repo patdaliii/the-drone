@@ -1,7 +1,7 @@
 package com.example.drone.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +13,10 @@ import com.example.drone.entity.Medication;
 import com.example.drone.repository.DroneRepository;
 import com.example.drone.repository.MedicationRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Service
+@Slf4j
 public class DroneService {
     
     @Autowired
@@ -22,6 +25,12 @@ public class DroneService {
     @Autowired
     MedicationRepository medicationRepository;
 
+    /**
+     * Register new Drone.
+     * 
+     * @param newDroneDto info of new drone
+     * @return saved Drone
+     */
     public Drone registerDrone(NewDroneDto newDroneDto) {
         try {
             Drone newDrone = new Drone();
@@ -37,29 +46,61 @@ public class DroneService {
         }
     }
 
+    /**
+     * Load Medication/s into a Drone
+     * 
+     * @param serialNumber of Drone to be loaded
+     * @param loadMedicationDto list of medications to be loaded
+     * @return Drone with updated list of medications loaded
+     */
     public Drone loadDroneWithMedication(String serialNumber, LoadMedicationDto loadMedicationDto) {
         // Check for Drone availabilty
         Drone drone = droneRepository.findBySerialNumber(serialNumber);
 
         if (drone != null) {
             if (drone.getState().equals("IDLE") && drone.getBatteryCapacity() >= 25) {
-                for (Medication medication : loadMedicationDto.getMedicationList()) {
-                    Medication checkMedication = medicationRepository.findByCode(medication.getCode());
-                    if (checkMedication == null) {
-                        // automatically register new Medicine if not found in db
-                        registerMedication(medication, drone);
+                // check if total load weight is lesser than or equal to drone weight limit
+                int totalLoadWeight = checkLoadWeight(loadMedicationDto.getMedicationList());
+
+                log.info("TOTAL LOAD WEIGHT {}", totalLoadWeight);
+                
+                if (totalLoadWeight <= drone.getWeightLimit()) {
+                    List<Medication> loadList = new ArrayList<>();
+                    for (Medication medication : loadMedicationDto.getMedicationList()) {
+                        Medication checkMedication = medicationRepository.findByCode(medication.getCode());
+                        if (checkMedication == null) {
+                            // automatically register new Medicine if not found in db
+                            checkMedication = registerMedication(medication, drone);
+                        } else {
+                            checkMedication.setDrone(drone);
+                            medicationRepository.save(checkMedication);
+                        }
+                        loadList.add(checkMedication);
                     }
+                    drone.setState("LOADING");
+                    droneRepository.save(drone);
+                    return drone;
+                } else {
+                    throw new RuntimeException("Load is over the weight limit of the selected Drone!");
                 }
-                drone.setState("LOADING");
-                return drone;
+            } else if (!drone.getState().equals("IDLE")) {
+                throw new RuntimeException("Unavailable! Drone is currently " + drone.getState());
+            } else if (drone.getBatteryCapacity() < 25){
+                throw new RuntimeException("Unavailable! Drone is @ " + drone.getBatteryCapacity() + "%");
             } else {
-                throw new RuntimeException("Unavailable! Drone is " + drone.getState() + " & @ " + drone.getBatteryCapacity() + "%");
+                throw new RuntimeException("Unavailable! Drone is @ " + drone.getBatteryCapacity() + "% and is currently " + drone.getState());
             }
         } else {
             throw new RuntimeException("Drone not found!");
         }
     }
 
+    /**
+     * Check the loaded Medication/s in a Drone
+     * 
+     * @param serialNumber of the Drone to be checked
+     * @return list of Medication
+     */
     public List<Medication> checkLoadedMedication(String serialNumber) {
         Drone drone = droneRepository.findBySerialNumber(serialNumber);
 
@@ -70,26 +111,59 @@ public class DroneService {
         }
     }
 
-    public String checkDroneAvailability(Long id) {
-        Optional<Drone> drone = droneRepository.findById(id);
+    /**
+     * Check Drone State
+     * 
+     * @param serialNumber of the Drone
+     * @return Drone State
+     */
+    public String checkDroneAvailability(String serialNumber) {
+        Drone drone = droneRepository.findBySerialNumber(serialNumber);
 
-        if(drone.isPresent()) {
-            return drone.get().getState();
+        if(drone != null) {
+            return drone.getState();
         } else {
             throw new RuntimeException("Drone not found!");
         }
     }
 
-    public String checkDroneInformation(Long id) {
-        Optional<Drone> drone = droneRepository.findById(id);
+    /**
+     * Check Drone Battery Percentage
+     * 
+     * @param serialNumber of the Drone
+     * @return battery percentage of the Drone
+     */
+    public String checkDroneInformation(String serialNumber) {
+        Drone drone = droneRepository.findBySerialNumber(serialNumber);
 
-        if(drone.isPresent()) {
-            return new String ("Drone " + String.valueOf(drone.get().getSerialNumber()) + " is currently at " + String.valueOf(drone.get().getBatteryCapacity()) + "%");
+        if(drone != null) {
+            return new String ("Drone " + String.valueOf(drone.getSerialNumber()) + " is currently at " + String.valueOf(drone.getBatteryCapacity()) + "%");
         } else {
             throw new RuntimeException("Drone not found!");
         }
     }
 
+    /**
+     * Check if total load of medication is <= drone weight Capacity
+     * 
+     * @param loadMedicationList to be loaded
+     * @return total weight of load
+     */
+    private int checkLoadWeight(List<Medication> loadMedicationList) {
+        int totalWeight = 0;
+        for (Medication medication : loadMedicationList) {
+            totalWeight += medication.getWeight();
+        }
+        return totalWeight;
+    }
+
+    /**
+     * Register a Medication in the db if new
+     * 
+     * @param medication details
+     * @param drone details
+     * @return newly created Medication
+     */
     private Medication registerMedication(Medication medication, Drone drone) {
         medication.setDrone(drone);
         Medication newMedication = medicationRepository.save(medication);
