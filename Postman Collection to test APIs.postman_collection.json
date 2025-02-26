@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "dfd5408e-a482-47ea-ab24-1f8f339e8a92",
+		"name": "Postman Collection to test APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "42628329"
+	},
+	"item": [
+		{
+			"name": "Registering a New Drone",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"serialNumber\": \"B1234567890DEF\",\r\n        \"model\": \"LIGHTWEIGHT\",\r\n        \"weightLimit\": 250,\r\n        \"batteryCapacity\": 100,\r\n        \"state\": \"IDLE\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/drone/registerDrone",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"drone",
+						"registerDrone"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Loading Medications (with wrong name format) into the New Drone",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serialNumber\": \"B1234567890DEF\",\r\n    \"medicationList\": \r\n        [\r\n            {\r\n                \"name\": \"PARACETAMOL$\",\r\n                \"weight\": 100,\r\n                \"code\": \"SAMPLECODE90\",\r\n                \"image\": null\r\n            },\r\n            {\r\n                \"name\": \"ASPIRIN\",\r\n                \"weight\": 100,\r\n                \"code\": \"SAMPLECODE92\",\r\n                \"image\": null\r\n            }\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/drone/loadDrone",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"drone",
+						"loadDrone"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Loading Medications (with correct Name and Code Format) into the newly created Drone",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serialNumber\": \"B1234567890DEF\",\r\n    \"medicationList\": \r\n        [\r\n            {\r\n                \"name\": \"PARACETAMOL\",\r\n                \"weight\": 100,\r\n                \"code\": \"SAMPLECODE90\",\r\n                \"image\": null\r\n            },\r\n            {\r\n                \"name\": \"ASPIRIN\",\r\n                \"weight\": 100,\r\n                \"code\": \"SAMPLECODE92\",\r\n                \"image\": null\r\n            }\r\n        ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/drone/loadDrone",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"drone",
+						"loadDrone"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Loaded Medications in the new Drone",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serialNumber\": \"B1234567890DEF\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/drone/checkLoadedMedication",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"drone",
+						"checkLoadedMedication"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Drone Availabilty",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serialNumber\": \"B1234567890DEF\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/drone/checkDroneAvailability",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"drone",
+						"checkDroneAvailability"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Drone Information",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"serialNumber\": \"B1234567890DEF\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/drone/checkDroneInformation",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"drone",
+						"checkDroneInformation"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
