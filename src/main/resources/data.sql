@@ -1,5 +1,5 @@
 -- INITIAL SAMPLE DATA FOR DRONE TABLE
-INSERT INTO drone (serial_number, model, weight_limit, battery_capacity, state) VALUES ('A1234567890ABC', 'LIGHTWEIGHT', 250, 100, 'IDLE');
+INSERT INTO drone (serial_number, model, weight_limit, battery_capacity, state) VALUES ('A1234567890ABC', 'LIGHTWEIGHT', 250, 100, 'LOADING');
 INSERT INTO drone (serial_number, model, weight_limit, battery_capacity, state) VALUES ('A1234567890DEF', 'LIGHTWEIGHT', 250, 100, 'IDLE');
 INSERT INTO drone (serial_number, model, weight_limit, battery_capacity, state) VALUES ('A1234567890GHI', 'MIDDLEWEIGHT', 500, 100, 'IDLE');
 INSERT INTO drone (serial_number, model, weight_limit, battery_capacity, state) VALUES ('A1234567890JKL', 'MIDDLEWEIGHT', 500, 100, 'IDLE');
