@@ -23,3 +23,6 @@ Running the Project
 
 Testing the Project
   - mvn test (if you want to run the tests without running the project)
+
+Notes in testing the APIs
+ - After loading the medication to the drone, there's approximately 20 secs before the Scheduler will revert the Drone's State to IDLE from LOADING. It would be best to test the API in checking the medications loaded in the drone within those 20 seconds to be able to get a Response Body that is not null.
